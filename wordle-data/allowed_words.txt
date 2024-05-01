@@ -5011,6 +5011,7 @@ hexer
 hexes
 hexyl
 heyed
+
 hiant
 hicks
 hided
@@ -12732,6 +12733,7 @@ yedes
 yeeds
 yeesh
 yeggs
+yehno
 yelks
 yells
 yelms
