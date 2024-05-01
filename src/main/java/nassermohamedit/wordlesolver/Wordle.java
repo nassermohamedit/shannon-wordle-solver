@@ -5,13 +5,19 @@ import java.util.*;
 public class Wordle {
 
     public static final int CORRECT = 1;
+
     public static final int PRESENT = 0;
+
     public static final int ABSENT = -1;
 
     private final Config config;
+
     private final String word;
+
     private final int[] charCount = new int[26];
+
     private int triesLeft;
+
     private boolean won;
 
     public Wordle(Config config, String word) {
@@ -39,9 +45,33 @@ public class Wordle {
         --this.triesLeft;
         int[] feedback = new int[config.length];
         for (int i = 0; i < config.length; ++i) {
-            if (charCount[guessed.charAt(i)] == 0) feedback[i] = ABSENT;
-            else if (guessed.charAt(i) == word.charAt(i)) feedback[i] = CORRECT;
-            else feedback[i] = PRESENT;
+            if (charCount[guessed.charAt(i) - 'a'] == 0) {
+                feedback[i] = ABSENT;
+            }
+            else if (guessed.charAt(i) == word.charAt(i)) {
+                feedback[i] = CORRECT;
+            }
+            else {
+                feedback[i] = PRESENT;
+            }
+        }
+        for (int i = 0; i < config.length; ++i) {
+            if (feedback[i] == PRESENT) {
+                int count = charCount[guessed.charAt(i) - 'a'];
+                for (int j = 0; j < config.length; ++j) {
+                    if (feedback[j] == CORRECT && guessed.charAt(j) == guessed.charAt(i)) {
+                        --count;
+                    }
+                }
+                for (int j = 0; j < i && count > 0; ++j) {
+                    if (feedback[j] == PRESENT && guessed.charAt(j) == guessed.charAt(i)) {
+                        --count;
+                    }
+                }
+                if (count <= 0) {
+                    feedback[i] = ABSENT;
+                }
+            }
         }
         checkResult(feedback);
         return feedback;
@@ -64,12 +94,15 @@ public class Wordle {
         return config;
     }
 
-    public static class Config {
+    public static final class Config {
+
         public final int length;
+
         public final int numberOfTries;
+
         private final Set<String> validGuesses;
 
-        public Config(int length, Set<String> validGuesses, int numberOfTries) {
+        public Config(int length, int numberOfTries, Set<String> validGuesses) {
             this.length = length;
             this.numberOfTries = numberOfTries;
             this.validGuesses = new HashSet<>(validGuesses);
@@ -80,3 +113,4 @@ public class Wordle {
         }
     }
 }
+
