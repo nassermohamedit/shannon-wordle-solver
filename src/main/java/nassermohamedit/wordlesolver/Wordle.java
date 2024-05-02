@@ -48,36 +48,7 @@ public class Wordle {
             throw new IllegalArgumentException("Not a valid guess");
         }
         --this.triesLeft;
-        int[] result = new int[config.length];
-        for (int i = 0; i < config.length; ++i) {
-            if (charCount[guessed.charAt(i) - 'a'] == 0) {
-                result[i] = ABSENT;
-            }
-            else if (guessed.charAt(i) == word.charAt(i)) {
-                result[i] = CORRECT;
-            }
-            else {
-                result[i] = PRESENT;
-            }
-        }
-        for (int i = 0; i < config.length; ++i) {
-            if (result[i] == PRESENT) {
-                int count = charCount[guessed.charAt(i) - 'a'];
-                for (int j = 0; j < config.length; ++j) {
-                    if (result[j] == CORRECT && guessed.charAt(j) == guessed.charAt(i)) {
-                        --count;
-                    }
-                }
-                for (int j = 0; j < i && count > 0; ++j) {
-                    if (result[j] == PRESENT && guessed.charAt(j) == guessed.charAt(i)) {
-                        --count;
-                    }
-                }
-                if (count <= 0) {
-                    result[i] = ABSENT;
-                }
-            }
-        }
+        int[] result = resultOf(word, guessed);
         checkResult(result);
         return new GuessResult(guessed, result, uid);
     }
@@ -101,6 +72,44 @@ public class Wordle {
 
     public int uid() {
         return uid;
+    }
+
+    public static int[] resultOf(String word, String other) {
+        if (word.length() != other.length()) {
+            throw new IllegalArgumentException();
+        }
+        int[] count = new int[26];
+        int length = word.length();
+        int[] result = new int[length];
+        for (int k = 0; k < length; ++k) {
+            ++count[word.charAt(k) - 'a'];
+        }
+        for (int k = 0; k < length; ++k) {
+            char c = other.charAt(k);
+            int idx = c - 'a';
+            if (c == word.charAt(k)) {
+                result[k] = CORRECT;
+                --count[idx];
+            }
+            else if (count[idx] == 0) {
+                result[k] = ABSENT;
+            }
+            else {
+                result[k] = PRESENT;
+            }
+        }
+        for (int k = 0; k < length; ++k) {
+            char c = other.charAt(k);
+            int idx = c - 'a';
+            if (result[k] == PRESENT) {
+                if (count[idx] <= 0) {
+                    result[k] = ABSENT;
+                } else {
+                    --count[idx];
+                }
+            }
+        }
+        return result;
     }
 
     public static class GuessResult {
