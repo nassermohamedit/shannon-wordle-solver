@@ -7,9 +7,7 @@ import org.junit.jupiter.api.Test;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import static nassermohamedit.wordlesolver.Wordle.*;
@@ -52,48 +50,48 @@ class WordleTest {
     @Test
     void allAbsent_ShouldReturnArrayOfAbsents() {
         Wordle wordle = new Wordle(config, "honey");
-        List<Integer> actual = wordle.guess("judas").result();
-        List<Integer> expected = Arrays.asList(ABSENT, ABSENT, ABSENT, ABSENT, ABSENT);
-        Assertions.assertEquals(expected, actual);
+        int[] actual = wordle.guess("judas").result();
+        int[] expected = new int[] {ABSENT, ABSENT, ABSENT, ABSENT, ABSENT};
+        Assertions.assertArrayEquals(expected, actual);
     }
 
     @Test
     void allPresent_ShouldReturnArrayOfPresents() {
         Wordle wordle = new Wordle(config, "honey");
-        List<Integer> actual = wordle.guess("yehno").result();
-        List<Integer> expected = Arrays.asList(PRESENT, PRESENT, PRESENT, PRESENT, PRESENT);
-        Assertions.assertEquals(expected, actual);
+        int[] actual = wordle.guess("yehno").result();
+        int[] expected = new int[] {PRESENT, PRESENT, PRESENT, PRESENT, PRESENT};
+        Assertions.assertArrayEquals(expected, actual);
     }
 
     @Test
     void allCorrect_ShouldReturnArrayOfCorrects() {
         Wordle wordle = new Wordle(config, "honey");
-        List<Integer> actual = wordle.guess("honey").result();
-        List<Integer> expected = Arrays.asList(CORRECT, CORRECT, CORRECT, CORRECT, CORRECT);
-        Assertions.assertEquals(expected, actual);
+        int[] actual = wordle.guess("honey").result();
+        int[] expected = new int[] {CORRECT, CORRECT, CORRECT, CORRECT, CORRECT};
+        Assertions.assertArrayEquals(expected, actual);
     }
 
     @Test
     void randomGuessTest1() {
         Wordle wordle = new Wordle(config, "sweet");
-        List<Integer> actual = wordle.guess("tweet").result();
-        List<Integer> expected = Arrays.asList(ABSENT, CORRECT, CORRECT, CORRECT, CORRECT);
-        Assertions.assertEquals(expected, actual);
+        int[] actual = wordle.guess("tweet").result();
+        int[] expected = new int[] {ABSENT, CORRECT, CORRECT, CORRECT, CORRECT};
+        Assertions.assertArrayEquals(expected, actual);
     }
 
     @Test
     void randomGuessTest2() {
         Wordle wordle = new Wordle(config, "alien");
-        List<Integer> actual = wordle.guess("annoy").result();
-        List<Integer> expected = Arrays.asList(CORRECT, PRESENT, ABSENT, ABSENT, ABSENT);
-        Assertions.assertEquals(expected, actual);
+        int[] actual = wordle.guess("annoy").result();
+        int[] expected = new int[] {CORRECT, PRESENT, ABSENT, ABSENT, ABSENT};
+        Assertions.assertArrayEquals(expected, actual);
     }
 
     @Test
     void randomGuessTest4() {
         Wordle wordle = new Wordle(config, "nerdy");
-        List<Integer> actual = wordle.guess("nanny").result();
-        List<Integer> expected = Arrays.asList(CORRECT, ABSENT, ABSENT, ABSENT, CORRECT);
-        Assertions.assertEquals(expected, actual);
+        int[] actual = wordle.guess("nanny").result();
+        int[] expected = new int[] {CORRECT, ABSENT, ABSENT, ABSENT, CORRECT};
+        Assertions.assertArrayEquals(expected, actual);
     }
 }

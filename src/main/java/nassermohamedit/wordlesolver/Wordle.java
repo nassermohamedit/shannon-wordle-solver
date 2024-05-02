@@ -109,20 +109,23 @@ public class Wordle {
 
         private final String word;
 
-        private final List<Integer> result;
+        private final int[] result;
+
+        private final int length;
 
         private GuessResult(String word, int[] result, int wordleId) {
             this.wordleId = wordleId;
             this.word = word;
-            this.result = Arrays.stream(result).boxed().toList();
+            this.length = word.length();
+            this.result = Arrays.copyOf(result, length);
         }
 
         public String word() {
             return word;
         }
 
-        public List<Integer> result() {
-            return result;
+        public int[] result() {
+            return Arrays.copyOf(result, length);
         }
 
         public int wordleId() {
