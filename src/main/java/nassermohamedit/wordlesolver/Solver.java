@@ -1,6 +1,5 @@
 package nassermohamedit.wordlesolver;
 
-import java.util.*;
 
 public class Solver {
 
@@ -14,11 +13,13 @@ public class Solver {
     }
     
     public final boolean solve() {
-        Wordle.GuessResult result = null;
+        Wordle.GuessSimilarity result = null;
         String guessed;
-        while (wordle.triesLeft() > 0) {
+        while (wordle.triesLeft() > 0 && !wordle.isWon()) {
             guessed = guesser.guess(result);
             result = wordle.guess(guessed);
+            System.out.println(guessed);
+
         }
         return wordle.isWon();
     }

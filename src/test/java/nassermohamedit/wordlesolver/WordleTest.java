@@ -10,7 +10,6 @@ import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 
-import static nassermohamedit.wordlesolver.Wordle.*;
 
 class WordleTest {
 
@@ -50,48 +49,48 @@ class WordleTest {
     @Test
     void allAbsent_ShouldReturnArrayOfAbsents() {
         Wordle wordle = new Wordle(config, "honey");
-        int[] actual = wordle.guess("judas").result();
-        int[] expected = new int[] {ABSENT, ABSENT, ABSENT, ABSENT, ABSENT};
-        Assertions.assertArrayEquals(expected, actual);
+        int actual = wordle.guess("judas").similarity();
+        int expected = 242;
+        Assertions.assertEquals(expected, actual);
     }
 
     @Test
     void allPresent_ShouldReturnArrayOfPresents() {
         Wordle wordle = new Wordle(config, "honey");
-        int[] actual = wordle.guess("yehno").result();
-        int[] expected = new int[] {PRESENT, PRESENT, PRESENT, PRESENT, PRESENT};
-        Assertions.assertArrayEquals(expected, actual);
+        int actual = wordle.guess("yehno").similarity();
+        int expected = 121;
+        Assertions.assertEquals(expected, actual);
     }
 
     @Test
     void allCorrect_ShouldReturnArrayOfCorrects() {
         Wordle wordle = new Wordle(config, "honey");
-        int[] actual = wordle.guess("honey").result();
-        int[] expected = new int[] {CORRECT, CORRECT, CORRECT, CORRECT, CORRECT};
-        Assertions.assertArrayEquals(expected, actual);
+        int actual = wordle.guess("honey").similarity();
+        int expected = 0;
+        Assertions.assertEquals(expected, actual);
     }
 
     @Test
     void randomGuessTest1() {
         Wordle wordle = new Wordle(config, "sweet");
-        int[] actual = wordle.guess("tweet").result();
-        int[] expected = new int[] {ABSENT, CORRECT, CORRECT, CORRECT, CORRECT};
-        Assertions.assertArrayEquals(expected, actual);
+        int actual = wordle.guess("tweet").similarity();
+        int expected = 2;
+        Assertions.assertEquals(expected, actual);
     }
 
     @Test
     void randomGuessTest2() {
         Wordle wordle = new Wordle(config, "alien");
-        int[] actual = wordle.guess("annoy").result();
-        int[] expected = new int[] {CORRECT, PRESENT, ABSENT, ABSENT, ABSENT};
-        Assertions.assertArrayEquals(expected, actual);
+        int actual = wordle.guess("annoy").similarity();
+        int expected = 237;
+        Assertions.assertEquals(expected, actual);
     }
 
     @Test
     void randomGuessTest4() {
         Wordle wordle = new Wordle(config, "nerdy");
-        int[] actual = wordle.guess("nanny").result();
-        int[] expected = new int[] {CORRECT, ABSENT, ABSENT, ABSENT, CORRECT};
-        Assertions.assertArrayEquals(expected, actual);
+        int actual = wordle.guess("nanny").similarity();
+        int expected = 78;
+        Assertions.assertEquals(expected, actual);
     }
 }

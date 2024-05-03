@@ -24,6 +24,7 @@ public class Wordle {
 
     private boolean won;
 
+
     public Wordle(Config config, String word) {
         this.uid = nextId++;
         if (config.length != word.length()) {
@@ -31,13 +32,13 @@ public class Wordle {
         }
         this.config = config;
         this.word = word;
-        triesLeft = config.numberOfTries;
+        this.triesLeft = config.numberOfTries;
         for (int i = 0; i < config.length; ++i) {
             ++charCount[word.charAt(i) - 'a'];
         }
     }
 
-    public GuessResult guess(String guessed) {
+    public GuessSimilarity guess(String guessed) {
         if (triesLeft == 0 || won) {
             throw new IllegalStateException("The Game is finished");
         }
@@ -48,14 +49,11 @@ public class Wordle {
             throw new IllegalArgumentException("Not a valid guess");
         }
         --this.triesLeft;
-        int[] result = resultOf(word, guessed);
-        checkResult(result);
-        return new GuessResult(guessed, result, uid);
-    }
-
-    private void checkResult(int[] feedback) {
-        if (Arrays.stream(feedback).allMatch(x -> x == CORRECT))
+        int similarity = similarityOf(word, guessed);
+        if (similarity == 0) {
             won = true;
+        }
+        return new GuessSimilarity(uid, guessed, similarity);
     }
 
     public int triesLeft() {
@@ -74,9 +72,9 @@ public class Wordle {
         return uid;
     }
 
-    public static int[] resultOf(String word, String other) {
+    public static int similarityOf(String word, String other) {
         if (word.length() != other.length()) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("Words must be of the same length");
         }
         int[] count = new int[26];
         int length = word.length();
@@ -109,32 +107,38 @@ public class Wordle {
                 }
             }
         }
-        return result;
+        return simArrToInt(length, result);
     }
 
-    public static class GuessResult {
+    private static int simArrToInt(int length, int[] result) {
+        int similarity = 0;
+        for (int i = 0, p = 1; i < length; ++i, p *= 3) {
+            similarity += result[i] * p;
+        }
+        return similarity;
+    }
+
+
+    public static class GuessSimilarity {
 
         private final int wordleId;
 
         private final String word;
 
-        private final int[] result;
+        private final int similarity;
 
-        private final int length;
-
-        private GuessResult(String word, int[] result, int wordleId) {
-            this.wordleId = wordleId;
+        private GuessSimilarity(int wordleId, String word, int similarity) {
+            this.similarity = similarity;
             this.word = word;
-            this.length = word.length();
-            this.result = Arrays.copyOf(result, length);
+            this.wordleId = wordleId;
         }
 
         public String word() {
             return word;
         }
 
-        public int[] result() {
-            return Arrays.copyOf(result, length);
+        public int similarity() {
+            return similarity;
         }
 
         public int wordleId() {
@@ -149,10 +153,10 @@ public class Wordle {
             if (obj == this) {
                 return true;
             }
-            if (!(obj instanceof GuessResult other)) {
+            if (!(obj instanceof GuessSimilarity other)) {
                 return false;
             }
-            if (other.wordleId != wordleId) {
+            if (other.wordleId() != wordleId) {
                 return false;
             }
             if (!other.word().equals(word)) {
@@ -168,8 +172,8 @@ public class Wordle {
             hash = 89*hash + this.wordleId;
             return hash;
         }
-    }
 
+    }
 
     public static final class Config {
 

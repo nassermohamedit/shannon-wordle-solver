@@ -2,5 +2,5 @@ package nassermohamedit.wordlesolver;
 
 public interface Guesser {
 
-    String guess(Wordle.GuessResult information);
+    String guess(Wordle.GuessSimilarity information);
 }
