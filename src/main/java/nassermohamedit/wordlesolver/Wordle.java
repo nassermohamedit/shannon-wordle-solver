@@ -6,11 +6,11 @@ public class Wordle {
 
     public static int nextId = 0;
 
-    public static final int CORRECT = 1;
+    public static final int CORRECT = 0;
 
-    public static final int PRESENT = 0;
+    public static final int PRESENT = 1;
 
-    public static final int ABSENT = -1;
+    public static final int ABSENT = 2;
 
     private final int uid;
 
