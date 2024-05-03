@@ -20,7 +20,7 @@ public class ShannonGuesser implements Guesser {
 
     private final int size;
 
-    private final int[][][] similarity;
+    //private final int[][][] similarity;
 
     private final Set<Integer> choices = new HashSet<>();
 
@@ -30,16 +30,17 @@ public class ShannonGuesser implements Guesser {
 
     private final int[] count = new int[26];
 
-    private final int[] chars;
+    private final int[] infoArray;
 
     public ShannonGuesser(Config config, int wordleId) {
         this.wordleId = wordleId;
         this.length = config.length;
         this.size = config.validGuesses().size();
         this.dictionary = config.validGuesses().toArray(new String[size]);
-        this.similarity = new int[size][size][length];
+        //this.similarity = new int[size][size][length];
         this.pattern = new char[length];
-        this.chars = new int[length];
+        int sizeOfOmega = (int) Math.pow(3, length);
+        this.infoArray = new int[sizeOfOmega];
     }
 
     @Override
@@ -61,8 +62,10 @@ public class ShannonGuesser implements Guesser {
         if (cached == null) {
             initialize();
         }
-        updateInformation();
-        updateChoices();
+        if (newInfo != null) {
+            updateInformation();
+            choices.removeIf(i -> shouldExclude(dictionary[i]));
+        }
         cached = findWordOfMaxEntropy();
     }
 
@@ -89,13 +92,58 @@ public class ShannonGuesser implements Guesser {
         }
     }
 
-    private void updateChoices() {
-        // TODO
+    private boolean shouldExclude(String word) {
+        for (int i = 0; i < length; ++i) {
+            if (pattern[i] != '*' && pattern[i] != word.charAt(i)) {
+                return true;
+            }
+        }
+        Arrays.fill(count, 0);
+        for (int i = 0; i < length; ++i) {
+            ++count[word.charAt(i) - 'a'];
+        }
+        for (int i = 0; i < length; ++i) {
+            int k = word.charAt(i) - 'a';
+            if (count[k] < minimax[k][0] || count[k] > minimax[k][1]) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private String findWordOfMaxEntropy() {
-        //TODO
-        return "";
+        double maxEntropy = Integer.MIN_VALUE;
+        String maxWord = dictionary[0];
+        for (int i = 0; i < size; ++i) {
+            Arrays.fill(infoArray, 0);
+            double entropy = 0;
+            for (int j: choices) {
+                int idx = indexOf(Wordle.resultOf(dictionary[j], dictionary[i]));
+                ++infoArray[idx];
+            }
+            for (int c: infoArray) {
+                double p = (double) c / (double) choices.size();
+                entropy += p * informationOf(p);
+            }
+            if (entropy > maxEntropy) {
+                maxEntropy = entropy;
+                maxWord = dictionary[i];
+            }
+        }
+        return maxWord;
+    }
+
+    private static double informationOf(double p) {
+        if (p <= 0) return 0;
+        return -Math.log(p) / Math.log(2);
+    }
+
+    public static int indexOf(int[] arr) {
+        int idx = 0;
+        for (int i = 0; i < arr.length; ++i) {
+            idx += arr[i] * (int) Math.pow(3, i);
+        }
+        return idx;
     }
 
     private void initialize() {
@@ -106,14 +154,9 @@ public class ShannonGuesser implements Guesser {
         }
         for (int i = 0; i < size; ++i) {
             choices.add(i);
-            for (int j = 0; j < size; ++j) {
-                similarity[i][j] = similarityOf(dictionary[i], dictionary[j]);
-            }
+            //for (int j = 0; j < size; ++j) {
+                //similarity[i][j] = Wordle.resultOf(dictionary[i], dictionary[j]);
+            //}
         }
-    }
-
-    private int[] similarityOf(String w1, String w2) {
-        // TODO
-        return new int[] {0, 0, 0, 0, 0};
     }
 }
